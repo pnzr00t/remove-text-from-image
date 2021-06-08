@@ -19,7 +19,8 @@ Steps:
 ## Possible improvement:
 1. Create more accurasy mask. For example create mask from words symbols, not from word rectangles (Create and train autoencoder by symbols);
 2. Autotune edge-connect models;
-3. ...
+3. Try another pretrained edge-connect models (psv/celeba/places2);
+4. ...
 
 ## Installation
 Man in progress ...
