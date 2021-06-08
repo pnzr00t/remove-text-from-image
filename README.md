@@ -41,9 +41,9 @@ At this moment run colab, and paste image link
 ## Different edge-connect models
 Celeba/Places/PSV(Paris Street View)
 <p align="center">
-	<img alt="Celeba" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/tom_cat/celeba.png?raw=true" width="30%"></img> 
-	<img alt="Places" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/tom_cat/places.png?raw=true" width="30%"></img> 
-	<img alt="PSV Model" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/tom_cat/psv.png?raw=true" width="30%"></img>
+	<img alt="Celeba" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/joker/celeba.png?raw=true" width="30%"></img> 
+	<img alt="Places" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/joker/places.png?raw=true" width="30%"></img> 
+	<img alt="PSV Model" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/joker/psv.png?raw=true" width="30%"></img>
 </p>
 
 
