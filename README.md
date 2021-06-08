@@ -38,6 +38,15 @@ At this moment run colab, and paste image link
 	<img src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/truck/out.png?raw=true" width="30%"></img>
 </p>
 
+## Different edge-connect models
+Celeba/Places/PSV(Paris Street View)
+<p align="center">
+	<img alt="Celeba" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/tom_cat/celeba.png?raw=true" width="30%"></img> 
+	<img alt="Places" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/tom_cat/places.png?raw=true" width="30%"></img> 
+	<img alt="PSV Model" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/tom_cat/psv.png?raw=true" width="30%"></img>
+</p>
+
+
 #### MIPT links:
   * [MIPT official site](https://mipt.ru);
   * [MIPT Stepik DLS course](https://stepik.org/course/65388);
