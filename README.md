@@ -1,4 +1,4 @@
-# remove-text-from-image
+# remove-text-from-image with Python from scratch
 
 ## How does it work?
 Steps:
@@ -18,9 +18,10 @@ Steps:
 
 ## Possible improvement:
 1. Create more accurasy mask. For example create mask from words symbols, not from word rectangles (Create and train autoencoder by symbols);
-2. Autotune edge-connect models;
-3. Try another pretrained edge-connect models (psv/celeba/places2);
-4. ...
+2. Play with function create_craft_args - change args.text_threshold, args.low_text, args.link_threshold - it's can give better result;
+3. Autotune edge-connect models;
+4. Try another pretrained edge-connect models (psv/celeba/places2);
+5. ...
 
 ## Installation
 Man in progress ...
