@@ -47,6 +47,9 @@ Celeba/Places/PSV(Paris Street View)
 	<img alt="PSV Model" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/joker/psv.png?raw=true" width="30%"></img>
 </p>
 
+### Additional info
+Create as part of dlschool.org project.
+``` Deep Learning School -- organization supported by PSAMI MIPT and Lab of Innovation (MIPT). ```
 
 #### MIPT links:
   * [MIPT official site](https://mipt.ru);
