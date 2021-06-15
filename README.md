@@ -40,7 +40,7 @@ Steps:
 3. Copy and paste URL for current repository;
 4. Chose colab file;
 5. Run all cells;
-6. Copy and original image URL in special cell with "input_image_url" parameter.
+6. Copy and paste original image URL in special cell with "input_image_url" parameter.
 
 ## More examples:
 <p align="center">
