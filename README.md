@@ -24,8 +24,23 @@ Steps:
 5. ...
 
 ## Installation
-Man in progress ...
-At this moment run colab, and paste image link
+
+### Installation on *nix system:
+1. Open console;
+2. Run command `git clone https://github.com/pnzr00t/remove-text-from-image` (current repository URL);
+3. Run command `cd ./remove-text-from-image/` (cloned folder);
+4. Run command `bash ./install_project.sh` (Downloading libs, and models);
+5. Run command `pip install -r ./requirements.txt`;
+6. Run main.py script, you can chage original image URL in `function test_remover_func():`. Output image will save in local folder `./results_images`.
+
+
+### Run in goole colab:
+1. Go https://colab.research.google.com/ ;
+2. File->Open notebook->Git Hub;
+3. Copy and paste URL for current repository;
+4. Chose colab file;
+5. Run all cells;
+6. Copy and original image URL in special cell with "input_image_url" parameter.
 
 ## More examples:
 <p align="center">
