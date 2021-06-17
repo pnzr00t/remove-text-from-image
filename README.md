@@ -21,7 +21,8 @@ Steps:
 2. Play with function create_craft_args - change args.text_threshold, args.low_text, args.link_threshold - it's can give better result;
 3. Autotune edge-connect models;
 4. Try another pretrained edge-connect models (psv/celeba/places2);
-5. ...
+5. Try change `args.model` value in `load_object_remover_config`;
+6. ...
 
 ## Installation
 
