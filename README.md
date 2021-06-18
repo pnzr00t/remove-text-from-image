@@ -34,6 +34,16 @@ Steps:
 5. Run command `pip install -r ./requirements.txt`;
 6. Run main.py script, you can chage original image URL in `function test_remover_func():`. Output image will save in local folder `./results_images`.
 
+### Installation and run FastAPI service:
+1. Open console;
+2. Run command `git clone https://github.com/pnzr00t/remove-text-from-image` (current repository URL);
+3. Run command `cd ./remove-text-from-image/` (cloned folder);
+4. Run command `bash ./install_project.sh` (Downloading libs, and models);
+5. Run command `pip install -r ./requirements.txt`;
+6. Run command `pip install -r ./requirements-fast-api.txt` (modules for FastAPI service);
+7. Run command for start up FastAPI service `uvicorn app:app`;
+8. Remove image by HTTP service `http://127.0.0.1:8000/image_remover/?url=https://img-9gag-fun.9cache.com/photo/axMNd31_460s.jpg` (IP and port will print in console when you start up service *step 7*. url= -- URL for original image).
+
 
 ### Run in goole colab:
 1. Go https://colab.research.google.com/ ;
