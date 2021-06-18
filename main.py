@@ -1,19 +1,3 @@
-#### install ####
-#### install ####
-#### install ####
-
-# requrents craft # error #pytorch=0.4.1
-
-#pip install h5py
-#pip install ipyplot
-
-# requrents Automated-objects-removal-inpainter
-#pip install shapely
-#pip install lmdb
-#pip install natsort
-
-#### /install ####
-
 import sys
 import os
 
@@ -149,12 +133,6 @@ def create_craft_args(refine):
 """ For test images in a folder """
 
 
-# image_list, _, _ = file_utils.get_files(args.test_folder)
-
-# result_folder = './result/'
-# if not os.path.isdir(result_folder):
-#     os.mkdir(result_folder)
-
 def test_net(args, net, image, text_threshold, link_threshold, low_text, cuda, poly, refine_net=None):
     t0 = time.time()
 
@@ -208,47 +186,7 @@ def test_net(args, net, image, text_threshold, link_threshold, low_text, cuda, p
 
     return boxes, polys, ret_score_text
 
-
-def create_text_mask(args, image_array, debug=False):
-    # load net
-    net = CRAFT()  # initialize
-
-    if debug:
-        print('Loading weights from checkpoint (' + args.trained_model + ')')
-
-    if args.cuda:
-        net.load_state_dict(copyStateDict(torch.load(args.trained_model)))
-    else:
-        net.load_state_dict(copyStateDict(torch.load(args.trained_model, map_location='cpu')))
-
-    if args.cuda:
-        net = net.cuda()
-        net = torch.nn.DataParallel(net)
-        cudnn.benchmark = False
-
-    net.eval()
-
-    # LinkRefiner
-    refine_net = None
-    if args.refine:
-        from refinenet import RefineNet
-        refine_net = RefineNet()
-
-        if debug:
-            print('Loading weights of refiner from checkpoint (' + args.refiner_model + ')')
-
-        if args.cuda:
-            refine_net.load_state_dict(copyStateDict(torch.load(args.refiner_model)))
-            refine_net = refine_net.cuda()
-            refine_net = torch.nn.DataParallel(refine_net)
-        else:
-            refine_net.load_state_dict(copyStateDict(torch.load(args.refiner_model, map_location='cpu')))
-
-        refine_net.eval()
-        args.poly = True
-
-    t = time.time()
-
+def create_text_mask(args, image_array, net, refine_net, debug=False):
     image = image_array
 
     bboxes, polys, score_text = test_net(args, net, image, args.text_threshold, args.link_threshold, args.low_text,
@@ -261,7 +199,6 @@ def create_text_mask(args, image_array, debug=False):
 
     # return final_bboxes, final_polys
     return bboxes, polys, score_text
-
 
 #########################################################################################
 #########################################################################################
@@ -364,7 +301,7 @@ class CustomsDataset(Dataset):
 
 
 class DatasetForRemoveWithMask(torch.utils.data.Dataset):
-    def __init__(self, config, flist, edge_flist, image_data_list, augment=True, training=True, debug=True):
+    def __init__(self, config, flist, edge_flist, augment=True, training=True, debug=True):
         super(DatasetForRemoveWithMask, self).__init__()
         self.augment = augment
         self.training = training
@@ -384,6 +321,7 @@ class DatasetForRemoveWithMask(torch.utils.data.Dataset):
         # in test mode, there's a one-to-one relationship between mask and image
         # masks are loaded non random
 
+    def set_image_data_list(self, image_data_list):
         # Наш массив с инфой
         self.image_data_list = image_data_list
 
@@ -609,15 +547,13 @@ class DatasetForRemoveWithMask(torch.utils.data.Dataset):
         # return img.astype(int)
         return img
 
-
 '''
         Code of EdgeConnect is from this repo
         https://github.com/knazeri/edge-connect
         '''
 
-
 class EdgeConnectNew():
-    def __init__(self, config, image_data_list, debug=False):
+    def __init__(self, config, debug=False):
 
         self.config = config
 
@@ -635,7 +571,8 @@ class EdgeConnectNew():
         self.model_name = model_name
         self.edge_model = EdgeModel(config).to(config.DEVICE)
         self.inpaint_model = InpaintingModel(config).to(config.DEVICE)
-        self.image_data_list = image_data_list
+
+        #self.image_data_list = image_data_list
         if self.debug:
             print("--------------")
             print("config.MODEL=", config.MODEL)
@@ -644,19 +581,20 @@ class EdgeConnectNew():
             print(self.model_name)
             print(config)
             print("--------------/")
+
         # test mode
         # config.TEST_FLIST - Путь до папки с файлами с картинками
         self.test_dataset = DatasetForRemoveWithMask(
             config,
             config.TEST_FLIST,
             config.TEST_EDGE_FLIST,
-            image_data_list=self.image_data_list,
+            #image_data_list=self.image_data_list,
             augment=False,
             training=False,
             debug=debug
         )
 
-        self.samples_path = os.path.join(config.PATH, 'samples')
+        # self.samples_path = os.path.join(config.PATH, 'samples')
         self.results_path = os.path.join(config.PATH, 'results')
 
         if config.RESULTS is not None:
@@ -666,6 +604,10 @@ class EdgeConnectNew():
             self.debug = True
 
         self.log_file = os.path.join(config.PATH, 'log_' + model_name + '.dat')
+
+    def set_image_data_list(self, image_data_list):
+        self.image_data_list = image_data_list
+        self.test_dataset.set_image_data_list(image_data_list)
 
     def load(self):
         if self.config.MODEL == 1:
@@ -762,8 +704,7 @@ class EdgeConnectNew():
             path = os.path.join(self.results_path, name)
             if self.debug:
                 print(index, name)
-
-            imsave(output, path)
+                imsave(output, path)
 
             ############################################################################################################
             ############ Заменяем пиксели в нашей старой картинке на новые пиксели ############
@@ -854,11 +795,20 @@ class EdgeConnectNew():
 # #from src.edge_connect import EdgeConnect
 
 
-def main(image_data_list, mode=None, debug=False):
+def main(image_data_list, model, debug=False):
     r"""starts the model
 
     """
 
+    #model = init_edge_connect_model(mode=2)
+    model.set_image_data_list(image_data_list)
+
+    # model test
+    if debug:
+        print('\nstart testing...\n')
+    model.test()
+
+def init_edge_connect_model(mode=2):
     config = load_object_remover_config(mode)
 
     # cuda visble devices
@@ -881,13 +831,10 @@ def main(image_data_list, mode=None, debug=False):
     random.seed(config.SEED)
 
     # build the model and initialize
-    model = EdgeConnectNew(config, image_data_list)
+    model = EdgeConnectNew(config)
     model.load()
 
-    # model test
-    if debug:
-        print('\nstart testing...\n')
-    model.test()
+    return model
 
 
 def load_object_remover_config(mode=None):
@@ -935,8 +882,9 @@ def load_object_remover_config(mode=None):
     # load config file
     config = Config(config_path)
 
-    # test mode
-    config.MODE = 2
+    # https://github.com/knazeri/edge-connect
+    #MODE 1: train, 2: test, 3: eval
+    config.MODE = 3
     config.MODEL = args.model if args.model is not None else 3
     config.OBJECTS = args.remove if args.remove is not None else [3, 15]
     config.SEG_DEVICE = 'cpu' if args.cpu is not None else 'cuda'
@@ -957,6 +905,48 @@ def load_object_remover_config(mode=None):
 
     return config
 
+def init_craft_networks(refiner=False, debug=False):
+    args = create_craft_args(refine=refiner)
+
+    # load net
+    net = CRAFT()  # initialize
+
+    if debug:
+        print('Loading weights from checkpoint (' + args.trained_model + ')')
+
+    if args.cuda:
+        net.load_state_dict(copyStateDict(torch.load(args.trained_model)))
+    else:
+        net.load_state_dict(copyStateDict(torch.load(args.trained_model, map_location='cpu')))
+
+    if args.cuda:
+        net = net.cuda()
+        net = torch.nn.DataParallel(net)
+        cudnn.benchmark = False
+
+    net.eval()
+
+    # LinkRefiner
+    refine_net = None
+    if args.refine:
+        from refinenet import RefineNet
+        refine_net = RefineNet()
+
+        if debug:
+            print('Loading weights of refiner from checkpoint (' + args.refiner_model + ')')
+
+        if args.cuda:
+            refine_net.load_state_dict(copyStateDict(torch.load(args.refiner_model)))
+            refine_net = refine_net.cuda()
+            refine_net = torch.nn.DataParallel(refine_net)
+        else:
+            refine_net.load_state_dict(copyStateDict(torch.load(args.refiner_model, map_location='cpu')))
+
+        refine_net.eval()
+        args.poly = True
+
+    return args, net, refine_net
+
 #########################################################################################
 #########################################################################################
 #########################################################################################
@@ -964,10 +954,23 @@ def load_object_remover_config(mode=None):
 #########################################################################################
 #########################################################################################
 
-def pipeline(image_link, debug=True):
+def pipeline(image_link, craft_args, craft_net, refiner_craft_net, edge_connect_model, debug=True):
     image_path = image_link
     image_file_name = os.path.basename(image_path)
-    image_pil = Image.open(BytesIO(requests.get(image_path).content))
+
+    # Make request and check status. We need ONLY REAL image urls
+    request_result = requests.get(image_path)
+    if request_result.status_code != 200:
+        return None, None
+
+    #image_pil = Image.open(BytesIO(requests.get(image_path).content))
+    # Check open image by PIL
+    try:
+        image_pil = Image.open(BytesIO(request_result.content))
+    except:
+        return None, None
+
+
     source_image_for_output = image_pil.copy()  # Исходная картинка которую мы подадим на выход для сравнения
     if debug:
         display('downloaded image', image_pil)
@@ -978,8 +981,9 @@ def pipeline(image_link, debug=True):
     if debug:
         print("Image width = ", image_width, "Image hight = ", image_height)
 
-    args = create_craft_args(refine=False)
-    word_bboxes, word_polys, word_score_text = create_text_mask(args, image_array)
+    #args = create_craft_args(refine=False)
+    #word_bboxes, word_polys, word_score_text = create_text_mask(args, image_array)
+    word_bboxes, word_polys, word_score_text = create_text_mask(craft_args, image_array, craft_net, refiner_craft_net)
 
     # args = create_craft_args(refine=True)
     # sentence_bboxes, sentence_polys, sentence_score_text = create_text_mask(args, image_array)
@@ -1011,7 +1015,7 @@ def pipeline(image_link, debug=True):
     image_data_list = [image_data_dictionary]
 
     # Удаление текста, mode это алгоритм который удаляет, второй это комбинированный из двух алгоритмов
-    main(image_data_list, mode=2)
+    main(image_data_list, edge_connect_model)
 
     image_with_deleted_text = Image.fromarray(image_data_list[0]["image_with_deleted_text"])
 
@@ -1045,7 +1049,23 @@ def test_remover_func():
 
     if input_image_url is not None and input_image_url !='':
         # source_image, output_image = pipeline(input_image_url, model_isr, model_translator, tokenizer_translator, font, debug=False)
-        source_image, output_image = pipeline(input_image_url, debug=False)
+
+        # Init CraftNets
+        craft_args, craft_net, refiner_craft_net = init_craft_networks(refiner=False, debug=False)
+        edge_connect_model = init_edge_connect_model(mode=3)
+
+        source_image, output_image = pipeline(
+            input_image_url,
+            craft_args, # Args create with craft nets, and use for text polygons detection
+            craft_net,
+            refiner_craft_net, # refiner for more text detection accuracy, == none in this project
+            edge_connect_model, # Inpaint EdgeConnect model, "restore" image
+            debug=False
+        )
+
+        if source_image is None or output_image is None:
+            return
+
         #output.clear()
         ipyplot.plot_images([source_image, output_image], max_images=2, img_width=output_image.width)
 
