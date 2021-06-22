@@ -86,9 +86,9 @@ Celeba/Places/PSV(Paris Street View)
 
 ## FAQ
 ### A lot of memory usage
-This script use a lot of memory, so i recommended restart you service and use gunicorn version
+This script use a lot of memory, so i recommended restart you service or use gunicorn version ([Install gunicorn service and run](#installation-and-run-fastapi-service-with-gunicorn))
 
-### Uvicorn service memory learning
+### Uvicorn service memory leaks
 Use gunicorn version and set properly  `--max-requests COUNT` COUNT parameter (according of you RAM capacity)
 
 ### Can script working faster
