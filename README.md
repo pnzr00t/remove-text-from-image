@@ -76,7 +76,7 @@ Note: FastAPI with unicorn "eat" a lot of memory and have memory leak, thats why
 	<img src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/truck/out.png?raw=true" width="30%"></img>
 </p>
 
-## Different edge-connect models
+### Different edge-connect models
 Celeba/Places/PSV(Paris Street View)
 <p align="center">
 	<img alt="Celeba" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/joker/celeba.png?raw=true" width="30%"></img> 
@@ -84,25 +84,7 @@ Celeba/Places/PSV(Paris Street View)
 	<img alt="PSV Model" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/joker/psv.png?raw=true" width="30%"></img>
 </p>
 
-### Additional info
-Create as part of dlschool.org project.
-``` Deep Learning School -- organization supported by PSAMI MIPT and Lab of Innovation (MIPT). ```
-
-#### MIPT links:
-  * [MIPT official site](https://mipt.ru);
-  * [MIPT Stepik DLS course](https://stepik.org/course/65388);
-  * [Deep learning school](https://dlschool.org)
-
-#### Based on 
- * [CRAFT text detecting](https://github.com/clovaai/CRAFT-pytorch.git);
- * [Automated objects removal inpainter](https://github.com/sujaykhandekar/Automated-objects-removal-inpainter);
- * [Generative Image Inpainting with Adversarial Edge Learning](https://github.com/knazeri/edge-connect) as part of Automated objects removal inpainter
- 
-#### Special thanks
- * [Artem Chumachenko - project MIPT curator](https://t.me/artek_chumak)
-
-
-## Additionl info
+## FAQ
 ### A lot of memory usage
 This script use a lot of memory, so i recommended restart you service and use gunicorn version
 
@@ -111,3 +93,22 @@ Use gunicorn version and set properly  `--max-requests COUNT` COUNT parameter (a
 
 ### Can script working faster
 Yes, but you need torch lib with GPU, script automatically detecting you GPU device and run on them. (Additional info: At this time it must be NVIDIA GPU with cuda drivers and >= 4GB RAM)
+
+
+## Additional info and links
+Create as part of dlschool.org project.
+``` Deep Learning School -- organization supported by PSAMI MIPT and Lab of Innovation (MIPT). ```
+
+### MIPT links:
+  * [MIPT official site](https://mipt.ru);
+  * [MIPT Stepik DLS course](https://stepik.org/course/65388);
+  * [Deep learning school](https://dlschool.org)
+
+### Based on 
+ * [CRAFT text detecting](https://github.com/clovaai/CRAFT-pytorch.git);
+ * [Automated objects removal inpainter](https://github.com/sujaykhandekar/Automated-objects-removal-inpainter);
+ * [Generative Image Inpainting with Adversarial Edge Learning](https://github.com/knazeri/edge-connect) as part of Automated objects removal inpainter
+ 
+### Special thanks
+ * [Artem Chumachenko - project MIPT curator](https://t.me/artek_chumak);
+ * [Viktor Savin - This project teammate](https://github.com/vsavin)
