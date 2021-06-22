@@ -1,12 +1,16 @@
 from typing import Optional
 
+import torch.cuda
 from fastapi import FastAPI
 from fastapi import HTTPException
+
 
 # https://stackoverflow.com/questions/62359413/how-to-return-an-image-in-fastapi
 from fastapi.responses import FileResponse # need additionaly install pip install aiofiles
 
 from main import *
+
+import gc
 
 app = FastAPI()
 
@@ -15,8 +19,36 @@ app = FastAPI()
 ########Init models for APP####################
 ###############################################
 # Init CraftNets
+#request_api_count = 0
 craft_args, craft_net, refiner_craft_net = init_craft_networks(refiner=False, debug=False)
 edge_connect_model = init_edge_connect_model(mode=3)
+
+# TODO: Remove late, if we don't need reinit models
+# def reinit_models_if_needed():
+#     global request_api_count
+#     global craft_args
+#     global craft_net
+#     global refiner_craft_net
+#     global edge_connect_model
+#
+#     request_api_count = request_api_count + 1
+#     if request_api_count > 5:
+#         request_api_count = 0
+#
+#         del craft_args
+#         del craft_net
+#         del refiner_craft_net
+#         del edge_connect_model
+#
+#         # Free memory
+#         gc.collect()
+#         if torch.cuda.is_available() == True:
+#             torch.cuda.empty_cache()
+#
+#         craft_args, craft_net, refiner_craft_net = init_craft_networks(refiner=False, debug=False)
+#         edge_connect_model = init_edge_connect_model(mode=3)
+
+
 ###############################################
 ########/Init models for APP###################
 ###############################################
@@ -40,7 +72,6 @@ async def read_image_remover(url: Optional[str] = None):
         os.makedirs('./results_images')
 
     if input_image_url is not None and input_image_url != '':
-        # source_image, output_image = pipeline(input_image_url, model_isr, model_translator, tokenizer_translator, font, debug=False)
 
         source_image, output_image = pipeline(
             input_image_url,
@@ -58,10 +89,11 @@ async def read_image_remover(url: Optional[str] = None):
         output_image_path = os.path.join("./results_images", image_file_name)
         output_image.save(output_image_path)
 
+
         print("Safe out image - ", output_image_path)
         #return FileResponse(output_image_path, media_type="image/jpg")
         return FileResponse(output_image_path)
     else:
-        #print('Provide an image url and try again.')
+        print('Provide an image url and try again.')
         raise HTTPException(status_code=404, detail="URL not exist")
 

@@ -44,6 +44,17 @@ Steps:
 7. Run command for start up FastAPI service `uvicorn app:app`;
 8. Remove text from image by HTTP request `http://127.0.0.1:8000/image_remover/?url=https://img-9gag-fun.9cache.com/photo/axMNd31_460s.jpg` (IP and port will print in console when you start up service *step 7*. url= -- URL to original image).
 
+### Installation and run FastAPI service with gunicorn:
+1. Open console;
+2. Run command `git clone https://github.com/pnzr00t/remove-text-from-image` (current repository URL);
+3. Run command `cd ./remove-text-from-image/` (cloned folder);
+4. Run command `bash ./install_project.sh` (Downloading libs, and models);
+5. Run command `pip install -r ./requirements.txt`;
+6. Run command `pip install -r ./requirements-fast-api.txt` (modules for FastAPI service);
+7. Run command for start up FastAPI service `gunicorn -w 1 -k uvicorn.workers.UvicornWorker app:app --timeout 600 --max-requests 5`;
+8. Remove text from image by HTTP request `http://127.0.0.1:8000/image_remover/?url=https://img-9gag-fun.9cache.com/photo/axMNd31_460s.jpg` (IP and port will print in console when you start up service *step 7*. url= -- URL to original image).
+
+Note: FastAPI with unicorn "eat" a lot of memory and have memory leak, thats why you can use gunicorn service, witch will restart and clean memory every `--max-requests COUNT_REQUEST`
 
 ### Run in goole colab:
 1. Go https://colab.research.google.com/ ;
@@ -89,3 +100,14 @@ Create as part of dlschool.org project.
  
 #### Special thanks
  * [Artem Chumachenko - project MIPT curator](https://t.me/artek_chumak)
+
+
+## Additionl info
+### A lot of memory usage
+This script use a lot of memory, so i remommended restart you service and use gunicorn version
+
+### Uvicorn service memory learning
+Use gunicorn version and set properly  `--max-requests COUNT` COUNT parameter (according of you RAM capacity)
+
+### Can script working faster
+Yes, but you need torch lib with GPU, script automatically detecting you GPU device and run on them. (Additional info: At this time it must be NVIDIA GPU with cuda drivers and >= 4GB RAM)

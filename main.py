@@ -631,19 +631,22 @@ class EdgeConnectNew():
             self.edge_model.save()
             self.inpaint_model.save()
 
+    # def test(self):
+    #     self.edge_model.eval()
+    #     self.inpaint_model.eval()
+    #
+    #     model = self.config.MODEL
+    #     create_dir(self.results_path)
+    #
+    #     test_loader = DataLoader(
+    #         dataset=self.test_dataset,
+    #         batch_size=1,
+    #     )
+
     def test(self):
-        self.edge_model.eval()
-        self.inpaint_model.eval()
+        self.edge_model.zero_grad()
+        self.inpaint_model.zero_grad()
 
-        model = self.config.MODEL
-        create_dir(self.results_path)
-
-        test_loader = DataLoader(
-            dataset=self.test_dataset,
-            batch_size=1,
-        )
-
-    def test(self):
         self.edge_model.eval()
         self.inpaint_model.eval()
 
@@ -686,18 +689,21 @@ class EdgeConnectNew():
 
             # edge model
             if model == 1:
-                outputs = self.edge_model(images_gray, edges, masks)
+                with torch.no_grad():
+                    outputs = self.edge_model(images_gray, edges, masks)
                 outputs_merged = (outputs * masks) + (edges * (1 - masks))
 
             # inpaint model
             elif model == 2:
-                outputs = self.inpaint_model(images, edges, masks)
+                with torch.no_grad():
+                    outputs = self.inpaint_model(images, edges, masks)
                 outputs_merged = (outputs * masks) + (images * (1 - masks))
 
             # inpaint with edge model / joint model
             else:
-                edges = self.edge_model(images_gray, edges, masks).detach()
-                outputs = self.inpaint_model(images, edges, masks)
+                with torch.no_grad():
+                    edges = self.edge_model(images_gray, edges, masks).detach()
+                    outputs = self.inpaint_model(images, edges, masks)
                 outputs_merged = (outputs * masks) + (images * (1 - masks))
 
             output = self.postprocess(outputs_merged)[0]
