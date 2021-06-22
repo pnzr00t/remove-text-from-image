@@ -104,7 +104,7 @@ Create as part of dlschool.org project.
 
 ## Additionl info
 ### A lot of memory usage
-This script use a lot of memory, so i remommended restart you service and use gunicorn version
+This script use a lot of memory, so i recommended restart you service and use gunicorn version
 
 ### Uvicorn service memory learning
 Use gunicorn version and set properly  `--max-requests COUNT` COUNT parameter (according of you RAM capacity)
