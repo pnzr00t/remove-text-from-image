@@ -1,4 +1,4 @@
-# remove-text-from-image with Python from scratch
+# Remove Text From Image With Python From Scratch
 
 ## How does it work?
 Steps:
@@ -112,3 +112,8 @@ Create as part of dlschool.org project.
 ### Special thanks
  * [Artem Chumachenko - project MIPT curator](https://t.me/artek_chumak);
  * [Viktor Savin - This project teammate](https://github.com/vsavin)
+
+## License
+Licensed under a [Creative Commons Attribution-NonCommercial 4.0 International.](https://creativecommons.org/licenses/by-nc/4.0/)
+
+Except where otherwise noted, this content is published under a [CC BY-NC](https://github.com/knazeri/edge-connect) license, which means that you can copy, remix, transform and build upon the content as long as you do not use the material for commercial purposes and give appropriate credit and provide a link to the license.
