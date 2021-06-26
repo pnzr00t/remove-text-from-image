@@ -56,7 +56,7 @@ Steps:
 
 Note: FastAPI with unicorn "eat" a lot of memory and have memory leak, thats why you can use gunicorn service, witch will restart and clean memory every `--max-requests COUNT_REQUEST`
 
-### Run in goole colab:
+### Run in google colab:
 1. Go https://colab.research.google.com/ ;
 2. File->Open notebook->Git Hub;
 3. Copy and paste URL for current repository;
