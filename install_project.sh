@@ -20,4 +20,5 @@ cp ./checkpoints/celeba/* ./checkpoints/
 mkdir ./results_images/
 
 echo ">>>>>I install all.<<<<<"
-echo "Don't forget run command for installing libs \"pil install -r requirements.txt\""
+echo "Don't forget run command for installing libs \"pip install -r requirements.txt\""
+echo "And if you want use it as sevice, run comand after previous command \"pip install -r requirements-fast-api.txt\""
