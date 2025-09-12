@@ -10,7 +10,15 @@ wget -O weights/craft_mlt_25k.pth https://drive.google.com/uc?id=1Jk4eGD7crsqCCg
 # !!!!!!!!!!Есть вероятность что она не нужна!!!!!!!!!!!!!!!
 wget -O weights/craft_refiner_CTW1500.pth https://drive.google.com/uc?id=1XSaFwBkOaFOdtk4Ane3DFyJGPRw6v5bO&export=download
 # Automated-objects-removal-inpainter
-bash ./Automated-objects-removal-inpainter/scripts/download_model.sh
+# This code above not working any more
+
+# bash ./Automated-objects-removal-inpainter/scripts/download_model.sh
+gdown "https://drive.google.com/uc?id=1IrlFQGTpdQYdPeZIEgGUaSFpbYtNpekA" -O "./checkpoints/models.zip"
+cd ./checkpoints/
+unzip "models.zip"
+cd ../
+rm -rf "./checkpoints/models.zip"
+
 #Copy edge model
 cp ./checkpoints/celeba/* ./checkpoints/
 #%cp ./checkpoints/psv/* ./checkpoints/
