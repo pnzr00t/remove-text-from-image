@@ -24,7 +24,30 @@ Steps:
 5. Try change `args.model` value in `load_object_remover_config`;
 6. ...
 
-## Installation
+# Installation
+
+## Install old version python (need for toch==1.4.0) on *nix
+1. `sudo apt-get install libssl-dev openssl`
+2. `wget https://www.python.org/ftp/python/3.7.6/Python-3.7.6.tgz`
+3. `tar xzvf Python-3.7.6.tgz`
+4. `cd Python-3.7.6`
+5. `./configure`
+6. `make`
+7. `sudo make install`
+
+To ensure write print
+`python3.7 -V`
+Will print you
+`Python 3.7.6`
+
+## Install and activate venv with old python version
+1. Install venv `python3.7 -m venv ~/venv-3.7-remove-text-from-image`
+2. Activate venv `source ~/venv-3.7-remove-text-from-image/bin/activate`
+
+After that you may install requerements from instruction below
+
+For deactivate venv print
+`deactivate`
 
 ### Installation on *nix system:
 1. Open console;
