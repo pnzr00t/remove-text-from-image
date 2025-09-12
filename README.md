@@ -27,6 +27,7 @@ Steps:
 # Installation
 
 ## Install old version python (need for toch==1.4.0) on *nix
+0. install `sudo apt-get install libffi-dev` or you see error `ModuleNotFoundError: No module named '_ctypes'` when start install requerements
 1. `sudo apt-get install libssl-dev openssl`
 2. `wget https://www.python.org/ftp/python/3.7.6/Python-3.7.6.tgz`
 3. `tar xzvf Python-3.7.6.tgz`
@@ -43,6 +44,7 @@ Will print you
 ## Install and activate venv with old python version
 1. Install venv `python3.7 -m venv ~/venv-3.7-remove-text-from-image`
 2. Activate venv `source ~/venv-3.7-remove-text-from-image/bin/activate`
+3. Install `pip install --upgrade pip setuptools wheel` - or you get error when try install opencv (requirements.txt)
 
 After that you may install requerements from instruction below
 
