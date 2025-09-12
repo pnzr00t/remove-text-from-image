@@ -1,6 +1,8 @@
 git clone https://github.com/clovaai/CRAFT-pytorch.git
 git clone https://github.com/sujaykhandekar/Automated-objects-removal-inpainter.git
 
+pip install gdown
+pip install --upgrade pip setuptools wheel
 
 # create dir for models
 mkdir weights
@@ -13,6 +15,7 @@ wget -O weights/craft_refiner_CTW1500.pth https://drive.google.com/uc?id=1XSaFwB
 # This code above not working any more
 
 # bash ./Automated-objects-removal-inpainter/scripts/download_model.sh
+mkdir ./checkpoints/
 gdown "https://drive.google.com/uc?id=1IrlFQGTpdQYdPeZIEgGUaSFpbYtNpekA" -O "./checkpoints/models.zip"
 cd ./checkpoints/
 unzip "models.zip"
