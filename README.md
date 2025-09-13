@@ -119,6 +119,9 @@ Use gunicorn version and set properly  `--max-requests COUNT` COUNT parameter (a
 ### Can script working faster
 Yes, but you need torch lib with GPU, script automatically detecting you GPU device and run on them. (Additional info: At this time it must be NVIDIA GPU with cuda drivers and >= 4GB RAM)
 
+#### MARK: Currently i turn off GPU usage
+If you want use GPU, install CUDNN drivers and libaraty, and uncomment in main.py code marked by
+`# MARK: TURN OF CUDA/GPU PROCCESSING`
 
 ## Additional info and links
 Create as part of dlschool.org project.

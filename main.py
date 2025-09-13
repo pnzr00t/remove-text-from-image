@@ -116,10 +116,12 @@ def create_craft_args(refine):
     args.text_threshold = 0.7  # 0.6
     args.low_text = 0.4  # 0.35
     args.link_threshold = 0.4  # 0.6
-    if torch.cuda.is_available():
-        args.cuda = True
-    else:
-        args.cuda = False
+# MARK: TURN OF CUDA/GPU PROCCESSING
+#    if torch.cuda.is_available():
+#        args.cuda = True
+#    else:
+#        args.cuda = False
+    args.cuda = False
     args.canvas_size = 1280
     args.mag_ratio = 1.5
     args.poly = False
@@ -146,8 +148,9 @@ def test_net(args, net, image, text_threshold, link_threshold, low_text, cuda, p
     x = imgproc.normalizeMeanVariance(img_resized)
     x = torch.from_numpy(x).permute(2, 0, 1)  # [h, w, c] to [c, h, w]
     x = Variable(x.unsqueeze(0))  # [c, h, w] to [b, c, h, w]
-    if cuda:
-        x = x.cuda()
+# MARK: TURN OF CUDA/GPU PROCCESSING
+#    if cuda:
+#        x = x.cuda()
 
     # forward pass
     with torch.no_grad():
@@ -820,12 +823,14 @@ def init_edge_connect_model(mode=2):
     # cuda visble devices
     os.environ['CUDA_VISIBLE_DEVICES'] = ','.join(str(e) for e in config.GPU)
 
-    # init device
-    if torch.cuda.is_available():
-        config.DEVICE = torch.device("cuda")
-        torch.backends.cudnn.benchmark = True  # cudnn auto-tuner
-    else:
-        config.DEVICE = torch.device("cpu")
+# MARK: TURN OF CUDA/GPU PROCCESSING
+#    # init device
+#    if torch.cuda.is_available():
+#        config.DEVICE = torch.device("cuda")
+#        torch.backends.cudnn.benchmark = True  # cudnn auto-tuner
+#    else:
+#        config.DEVICE = torch.device("cpu")
+    config.DEVICE = torch.device("cpu")
 
     # set cv2 running threads to 1 (prevents deadlocks with pytorch dataloader)
     cv2.setNumThreads(0)
@@ -893,7 +898,9 @@ def load_object_remover_config(mode=None):
     config.MODE = 3
     config.MODEL = args.model if args.model is not None else 3
     config.OBJECTS = args.remove if args.remove is not None else [3, 15]
-    config.SEG_DEVICE = 'cpu' if args.cpu is not None else 'cuda'
+# MARK: TURN OF CUDA/GPU PROCCESSING
+#    config.SEG_DEVICE = 'cpu' if args.cpu is not None else 'cuda'
+    config.SEG_DEVICE = 'cpu'
     config.INPUT_SIZE = 256
     if args.input is not None:
         config.TEST_FLIST = args.input
@@ -920,15 +927,18 @@ def init_craft_networks(refiner=False, debug=False):
     if debug:
         print('Loading weights from checkpoint (' + args.trained_model + ')')
 
-    if args.cuda:
-        net.load_state_dict(copyStateDict(torch.load(args.trained_model)))
-    else:
-        net.load_state_dict(copyStateDict(torch.load(args.trained_model, map_location='cpu')))
+# MARK: TURN OF CUDA/GPU PROCCESSING
+    #if args.cuda:
+#        net.load_state_dict(copyStateDict(torch.load(args.trained_model)))
+#    else:
+#        net.load_state_dict(copyStateDict(torch.load(args.trained_model, map_location='cpu')))
+    net.load_state_dict(copyStateDict(torch.load(args.trained_model, map_location='cpu')))
 
-    if args.cuda:
-        net = net.cuda()
-        net = torch.nn.DataParallel(net)
-        cudnn.benchmark = False
+# MARK: TURN OF CUDA/GPU PROCCESSING
+#    if args.cuda:
+#        net = net.cuda()
+#        net = torch.nn.DataParallel(net)
+#        cudnn.benchmark = False
 
     net.eval()
 
@@ -941,12 +951,14 @@ def init_craft_networks(refiner=False, debug=False):
         if debug:
             print('Loading weights of refiner from checkpoint (' + args.refiner_model + ')')
 
-        if args.cuda:
-            refine_net.load_state_dict(copyStateDict(torch.load(args.refiner_model)))
-            refine_net = refine_net.cuda()
-            refine_net = torch.nn.DataParallel(refine_net)
-        else:
-            refine_net.load_state_dict(copyStateDict(torch.load(args.refiner_model, map_location='cpu')))
+# MARK: TURN OF CUDA/GPU PROCCESSING
+#        if args.cuda:
+#            refine_net.load_state_dict(copyStateDict(torch.load(args.refiner_model)))
+#            refine_net = refine_net.cuda()
+#            refine_net = torch.nn.DataParallel(refine_net)
+#        else:
+#            refine_net.load_state_dict(copyStateDict(torch.load(args.refiner_model, map_location='cpu')))
+        refine_net.load_state_dict(copyStateDict(torch.load(args.refiner_model, map_location='cpu')))
 
         refine_net.eval()
         args.poly = True
@@ -979,7 +991,9 @@ def pipeline(image_link, craft_args, craft_net, refiner_craft_net, edge_connect_
 
     source_image_for_output = image_pil.copy()  # Исходная картинка которую мы подадим на выход для сравнения
     if debug:
-        display('downloaded image', image_pil)
+        #display('downloaded image', image_pil)
+        print(debug)
+
     image_array = np.array(image_pil)
 
     image_width = image_array.shape[1]
@@ -996,7 +1010,10 @@ def pipeline(image_link, craft_args, craft_net, refiner_craft_net, edge_connect_
 
     mask_array_from_words = get_image_mask_from_boxes(image_array, word_bboxes)
     if debug:
-        display(Image.fromarray(mask_array_from_words))
+        #display(Image.fromarray(mask_array_from_words))
+        print("display('downloaded image', image_pil)")
+
+
 
     word_rectangles = transform_bboxes_to_rectangles(word_bboxes)
 
@@ -1057,8 +1074,13 @@ def test_remover_func():
         # source_image, output_image = pipeline(input_image_url, model_isr, model_translator, tokenizer_translator, font, debug=False)
 
         # Init CraftNets
-        craft_args, craft_net, refiner_craft_net = init_craft_networks(refiner=False, debug=False)
+        print("Before init_craft_networks")
+
+        craft_args, craft_net, refiner_craft_net = init_craft_networks(refiner=True, debug=True)
+        print("After init_craft_networks")
+
         edge_connect_model = init_edge_connect_model(mode=3)
+        print("Before pipe")
 
         source_image, output_image = pipeline(
             input_image_url,
@@ -1066,14 +1088,15 @@ def test_remover_func():
             craft_net,
             refiner_craft_net, # refiner for more text detection accuracy, == none in this project
             edge_connect_model, # Inpaint EdgeConnect model, "restore" image
-            debug=False
+            debug=True
         )
+        print("After pipe")
 
         if source_image is None or output_image is None:
             return
 
         #output.clear()
-        ipyplot.plot_images([source_image, output_image], max_images=2, img_width=output_image.width)
+        #ipyplot.plot_images([source_image, output_image], max_images=2, img_width=output_image.width)
 
         # Save output image
         output_image_path = os.path.join("./results_images", image_file_name)
