@@ -12,6 +12,8 @@ from main import *
 
 import gc
 
+from typing import List, Dict, Any
+
 app = FastAPI()
 
 
@@ -53,13 +55,7 @@ edge_connect_model = init_edge_connect_model(mode=3)
 ########/Init models for APP###################
 ###############################################
 
-@app.get("/")
-def read_root():
-     return {"Hello": "World", "mega_class" : "mega_object.string1"}
-
-# without async memory leaking
-@app.get("/image_remover/")
-async def read_image_remover(url: Optional[str] = None):
+def remove_text_from_image(url: Optional[str] = None, bounding_box_list = []):
     if url is None:
         raise HTTPException(status_code=404, detail="URL not exist")
 
@@ -78,7 +74,8 @@ async def read_image_remover(url: Optional[str] = None):
             craft_args,  # Args create with craft nets, and use for text polygons detection
             craft_net,
             refiner_craft_net,  # refiner for more text detection accuracy, == none in this project
-            edge_connect_model,  # Inpaint EdgeConnect model, "restore" image
+            edge_connect_model,  # Inpaint EdgeConnect model, "restore" image,
+            bounding_box_list=bounding_box_list,
             debug=False
         )
 
@@ -97,3 +94,28 @@ async def read_image_remover(url: Optional[str] = None):
         print('Provide an image url and try again.')
         raise HTTPException(status_code=404, detail="URL not exist")
 
+@app.get("/")
+def read_root():
+     return {"Hello": "World", "mega_class" : "mega_object.string1"}
+
+# without async memory leaking
+@app.get("/image_remover/")
+async def read_image_remover(url: Optional[str] = None):
+    return remove_text_from_image(url = url, bounding_box_list = [])
+
+# Alternative version with explicit query parameter name
+# json example - [ { "bounding_box": [27, 136, 640, 298] } ]
+@app.post("/image_remover_with_blocks/")
+async def process_post_request_alt(
+    body: List[Dict[str, Any]],
+    url: Optional[str] = None  # FastAPI automatically maps query parameter "get-parameter" to this variable
+):
+    """
+    Alternative version - FastAPI automatically handles the hyphen in query parameter names
+    """
+
+    list_of_bounding_boxes = []
+    for item in body:
+        list_of_bounding_boxes.append(item["bounding_box"])
+
+    return remove_text_from_image(url = url, bounding_box_list = list_of_bounding_boxes)

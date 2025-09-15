@@ -224,6 +224,18 @@ def transform_bboxes_to_rectangles(bboxes):
                    [x.min(axis=0)[0], x.max(axis=0)[1]]] for x in bboxes]
     return np.array(rectangles)
 
+# По сути то же что и выше, но делаем close polygon
+def bbox_to_polygon_closed(bbox):
+    x1, y1, x2, y2 = bbox
+    polygon = [
+        (x1, y1),
+        (x2, y1),
+        (x2, y2),
+        (x1, y2),
+        (x1, y1)  # close the polygon
+    ]
+    return polygon
+
 
 def create_cutted_images_list(image_array, rectangles):
     list_ = []
@@ -972,7 +984,15 @@ def init_craft_networks(refiner=False, debug=False):
 #########################################################################################
 #########################################################################################
 
-def pipeline(image_link, craft_args, craft_net, refiner_craft_net, edge_connect_model, debug=True):
+def pipeline(
+        image_link,
+        craft_args,
+        craft_net,
+        refiner_craft_net,
+        edge_connect_model,
+        bounding_box_list=[],
+        debug=True
+):
     image_path = image_link
     image_file_name = os.path.basename(image_path)
 
@@ -1012,7 +1032,29 @@ def pipeline(image_link, craft_args, craft_net, refiner_craft_net, edge_connect_
     if debug:
         #display(Image.fromarray(mask_array_from_words))
         print("display('downloaded image', image_pil)")
+    # Это доп bounding box, мы сделаем & c mask_array_from_words
+    # И уже чистка будет происходить ихсодя из этого пересечения
+    # Чтобы оставлять текст который у нас не входит в bounding box
+    if len(bounding_box_list) > 0:
+        polygons_list = []
+        for bbox in bounding_box_list:
+            polygons_list.append(bbox_to_polygon_closed(bbox))
 
+        # Маска которую мы сделали из boundinb box
+        mask_bounding_box_list = get_image_mask_from_boxes(image_array, polygons_list)
+
+        # Массив с bool индексами
+        index_array_mask_array_from_words = (mask_array_from_words > 0)
+        index_array_mask_bounding_box_list = (mask_bounding_box_list > 0)
+
+        # Чистый массив забитый нулями
+        clear_masked_array = get_image_mask_from_boxes(image_array, [])
+
+        # Вот тут у нас пересечение. По сути пересечение bounding_box_mask && mask_array_from_words
+        clear_masked_array[index_array_mask_array_from_words & index_array_mask_bounding_box_list] = 255
+
+        # финальная маска это пересечение из маски детекции и маски boundinb box которую нам передали
+        mask_array_from_words = clear_masked_array
 
 
     word_rectangles = transform_bboxes_to_rectangles(word_bboxes)
