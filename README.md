@@ -109,6 +109,15 @@ Celeba/Places/PSV(Paris Street View)
 	<img alt="PSV Model" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/joker/psv.png?raw=true" width="30%"></img>
 </p>
 
+Original
+<img alt="original" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/twitter/aKGpZ2j_700b.jpg?raw=true"></img>
+Celeba/PSV(Paris Street View)/Places
+<p align="center">
+	<img alt="Celeba" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/twitter/aKGpZ2j_700b_celeba.jpg?raw=true" width="30%"></img> 
+	<img alt="Places" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/twitter/aKGpZ2j_700b_places.jpg?raw=true" width="30%"></img> 
+	<img alt="PSV Model" src="https://github.com/pnzr00t/remove-text-from-image/blob/main/ImagesExamples/twitter/aKGpZ2j_700b_psv2.jpg?raw=true" width="30%"></img>
+</p>
+
 ## FAQ
 ### A lot of memory usage
 This script use a lot of memory, so i recommended restart you service or use gunicorn version ([Install gunicorn service and run](#installation-and-run-fastapi-service-with-gunicorn))
